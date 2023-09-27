@@ -1,0 +1,21 @@
+volumes:
+ build:
+
+services:
+  build:
+    build:
+      context: ./dockerfiles/build
+    volumes:
+    - build:/mnt/build
+    - ./:/mnt/repo:ro
+    command: ["/bin/sh", "-c", "cd /mnt/build && cmake /mnt/repo && make -j"]
+  
+  hello:
+    build:
+      context: ./dockerfiles/hello
+    volumes:
+    - build:/mnt/build
+    command: "/mnt/build/hello-world"
+    depends_on:
+      build:
+        condition: service_completed_successfully
